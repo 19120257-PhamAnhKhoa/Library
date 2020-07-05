@@ -1,0 +1,6 @@
+﻿  Source.cpp
+D:\BT(THKTLT)\Library\Library\Source.cpp(218,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+D:\BT(THKTLT)\Library\Library\Source.cpp(221,9): warning C4101: 'reader': unreferenced local variable
+D:\BT(THKTLT)\Library\Library\Source.cpp(223,7): warning C4101: 'card': unreferenced local variable
+D:\BT(THKTLT)\Library\Library\Source.cpp(222,7): warning C4101: 'book': unreferenced local variable
+  Library.vcxproj -> D:\BT(THKTLT)\Library\Debug\Library.exe
