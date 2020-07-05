@@ -1,4 +1,5 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <iostream>
 using namespace std;
@@ -71,3 +72,21 @@ struct Card
 	bool late;
 	bool lost;
 };
+
+bool login(User& user, char* argv[], const char* filename, bool& isAdmin);
+
+bool isLeapY(int n);
+
+void inputDate(Date& date);
+
+void newLogin(User& user);
+
+bool checkAvailability(User user, const char* filename);
+
+void changePassword(User& user, const char* filename);
+
+void generalInfo(User& user);
+
+void addUser(User& user, const char* filename);
+
+void updateInfo(User& user, const char* filename);
