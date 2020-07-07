@@ -221,3 +221,36 @@ void updateInfo(User& user, const char* filename)
 {
 	return;
 }
+
+void pass(char mk[])
+{
+	char x;
+	int size = 0;
+	cout << "Nhap mat khau: ";
+	x = _getch();
+	while (x != 13)
+	{
+		if (x == 8 && size > 0)
+		{
+			mk[size] = '\0';
+			size--;
+			cout << "\b \b";
+		}
+		else if (x == 8 && size == 0)
+		{
+			x = _getch();
+			continue;
+		}
+		else
+		{
+			cout << x;
+			cout << "\b \b*";
+			mk[size] = x;
+			size++;
+		}
+		x = _getch();
+
+	}
+	mk[size] = '\0';
+
+}

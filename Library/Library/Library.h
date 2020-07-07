@@ -2,6 +2,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <iostream>
+#include<conio.h>
 using namespace std;
 
 
@@ -81,3 +82,5 @@ void generalInfo(User& user);
 void addUser(User& user, const char* filename);
 
 void updateInfo(User& user, const char* filename);
+
+void pass(char mk[]);
