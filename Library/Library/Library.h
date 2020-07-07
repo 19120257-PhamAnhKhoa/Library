@@ -13,16 +13,6 @@ struct Date
 	int day;
 };
 
-struct Address
-
-{
-	char number[10];
-	char street[20];
-	char district[20];
-	char city[20];
-	char country[20];
-};
-
 struct User
 {
 	char username[50];
@@ -30,11 +20,12 @@ struct User
 	char name[50];
 	Date birthday;
 	char ID[10];
-	Address curAddress;
-	char gender[7];
+	char address[50];
+	char gender[4];
 	int status;
+	//1 Activated 2 Blocked
 	int type;
-	//1 manager //2 executive
+	//1 manager 2 executive
 };
 
 struct Reader
@@ -45,7 +36,7 @@ struct Reader
 	Date birthday;
 	char gender[7];
 	char email[50];
-	Address curAddress;
+	char address[50];
 	Date cardCreate;
 	Date cardExpire;
 };

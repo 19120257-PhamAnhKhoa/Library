@@ -9,10 +9,11 @@ void main(int argc, char* argv[])
 	Reader reader;
 	Book book;
 	Card card;
-	if (login(user, argv, "user.bin", isAdmin) == true)
-	{
-		cout << "Ok";
-		cout << isAdmin;
-	}
-	else cout << "Fuck this shit I'm out";
+	//if (login(user, argv, "user.bin", isAdmin) == true)
+	//{
+	//	cout << "Ok";
+	//	cout << isAdmin;
+	//}
+	//else cout << "Fuck this shit I'm out";
+	addUser(user, "user.bin");
 }

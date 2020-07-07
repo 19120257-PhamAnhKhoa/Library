@@ -1,0 +1,6 @@
+﻿  Source.cpp
+D:\Lập trình\do an\Library\Library\Source.cpp(6,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+D:\Lập trình\do an\Library\Library\Source.cpp(9,9): warning C4101: 'reader': unreferenced local variable
+D:\Lập trình\do an\Library\Library\Source.cpp(11,7): warning C4101: 'card': unreferenced local variable
+D:\Lập trình\do an\Library\Library\Source.cpp(10,7): warning C4101: 'book': unreferenced local variable
+  Library.vcxproj -> D:\Lập trình\do an\Library\x64\Debug\Library.exe

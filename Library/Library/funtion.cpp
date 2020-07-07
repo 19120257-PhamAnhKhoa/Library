@@ -91,9 +91,17 @@ void newLogin(User& user)
 	cout << "Nhap vao username:";
 	cin.get(user.username, 50);
 	cin.ignore();
-	cout << "Nhap vao password:";
-	cin.get(user.password, 50);
-	cin.ignore();
+	char pass[50];
+	do
+	{
+		cout << "Nhap vao password:";
+		cin.get(user.password, 50);
+		cin.ignore();
+		cout << "Nhap lai password:";
+		cin.get(pass, 50);
+		cin.ignore();
+	}
+	while (strcmp(user.password, pass) != 0);
 }
 
 bool checkAvailability(User user, const char* filename)
@@ -172,6 +180,9 @@ void generalInfo(User& user)
 	cin.ignore();
 	cout << "Nhap vao ID:";
 	cin.get(user.ID, 10);
+	cin.ignore();
+	cout << "Nhap vao dia chi:";
+	cin.get(user.address, 50);
 	cin.ignore();
 	cout << "Nhap vao gioi tinh:";
 	cin.get(user.gender, 7);
