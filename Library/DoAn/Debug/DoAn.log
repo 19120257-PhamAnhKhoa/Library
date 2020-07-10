@@ -1,0 +1,5 @@
+﻿  Source.cpp
+D:\Yami910\Library\DoAn\Source.cpp(4,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+D:\Yami910\Library\DoAn\Source.cpp(10,7): warning C4101: 'card': unreferenced local variable
+D:\Yami910\Library\DoAn\Source.cpp(9,7): warning C4101: 'book': unreferenced local variable
+  DoAn.vcxproj -> D:\Yami910\Library\Debug\DoAn.exe
