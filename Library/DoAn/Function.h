@@ -7,6 +7,8 @@
 
 using namespace std;
 
+//Biến động
+static int location;
 
 // Các struct
 struct Date
@@ -50,8 +52,8 @@ struct Book
 	char bName[50];
 	char author[50];
 	char publisher[50];
-	Date publishY;
-	char genre[10];
+	int publishY;
+	char genre[20];
 	int price;
 	int quantity;
 };
@@ -100,6 +102,8 @@ bool checkReader(Reader reader, const char* filename);
 
 void newReader(Reader& reader);
 
+void generalReaderInfo(Reader& reader);
+
 void listReader(Reader& reader, const char* filename);
 
 void readerInfo(Reader& reader);
@@ -111,5 +115,17 @@ void addReader(Reader& reader, const char* filename);
 void updateReaderInfo(Reader& reader, const char* filename, int index);
 
 void deleteReader(Reader& reader, const char* filename1, const char* filename2, int index);
+
+void findReaderID(Reader& reader, const char* filename, char curID[]);
+
+void findReaderName(Reader& reader, const char* filename, char curName[]);
+
+void newBook(Book& book);
+
+bool checkBook(Book& book, const char* filename);
+
+void bookInfo(Book& book);
+
+void addBook(Book& book, const char* filename);
 
 void pass(char mk[]);

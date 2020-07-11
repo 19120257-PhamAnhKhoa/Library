@@ -206,6 +206,7 @@ bool login(User& user, const char* filename, bool& isAdmin,
 		fread(&user, sizeof(User), 1, f1);
 		if (strcmp(curUser, user.username) == 0 && strcmp(curPass, user.password) == 0)
 		{
+			location = ftell(f1) - sizeof(User);
 			if (user.type == 1)
 				isManager = true;
 			else
@@ -234,27 +235,20 @@ void changePassword(User& user, const char* filename)
 	do
 	{
 		cout << "Nhap vao mat khau hien tai:";
-		cin.get(curPas, 50);
-		cin.ignore();
-		fseek(f1, 0, SEEK_END);
-		int n = ftell(f1) / sizeof(User);
-		rewind(f1);
-		for (int i = 0; i < n; i++)
+		pass(curPas);
+		fseek(f1, location, SEEK_SET);
+		fread(&user, sizeof(User), 1, f1);
+		if (strcmp(curPas, user.password) == 0)
 		{
-			fread(&user, sizeof(User), 1, f1);
-			if (strcmp(curPas, user.password) == 0)
-			{
-				k = ftell(f1);
-				temp = user;
-				correct = true;
-				break;
-			}
+			temp = user;
+			correct = true;
+			break;
 		}
 	} while (correct == false);
 	cout << "Nhap mat khau moi:";
-	cin.get(newPas, 50);
+	pass(newPas);
 	strcpy(temp.password, newPas);
-	fseek(f1, k - sizeof(User), SEEK_SET);
+	fseek(f1, location, SEEK_SET);
 	fwrite(&temp, sizeof(User), 1, f1);
 	fclose(f1);
 }
@@ -267,22 +261,8 @@ void updateInfo(User& user, const char* filename, char curUser[], char curPass[]
 	FILE* f1 = fopen(filename, "rb+");
 	if (f1 == NULL)
 		return;
-	fseek(f1, 0, SEEK_END);
-	int n = ftell(f1) / sizeof(User);
-	rewind(f1);
-	for (int i = 0; i < n; i++)
-	{
-		fread(&user, sizeof(User), 1, f1);
-		if (strcmp(user.username, curUser) == 0 && strcmp(user.password, curPass) == 0)
-		{
-			cout << "Cap nhat lai thong tin cua ban than:" << endl;
-			generalInfo(user);
-			k = ftell(f1);
-			break;
-		}
-	}
-	rewind(f1);
-	fseek(f1, k - sizeof(User), SEEK_SET);
+	fseek(f1, location, SEEK_SET);
+	generalInfo(user);
 	fwrite(&user, sizeof(User), 1, f1);
 	fclose(f1);
 }
@@ -305,7 +285,6 @@ void showInfo(User user, const char* filename, char curUser[], char Pass[])
 		cout << "Executive" << endl;
 	else
 		cout << "Manager" << endl;
-
 }
 
 //Function 1.5 add users
@@ -508,6 +487,22 @@ void moveRBottom(Reader& reader, const char* filename, int index)
 }
 //Hàm chuyển phần tử cần xóa xuống cuối để có thể dễ dàng xóa 
 
+void generalReaderInfo(Reader& reader)
+{
+	cout << "Ma doc gia:" << reader.readerID << endl;
+	cout << "Ho va ten:" << reader.name << endl;
+	cout << "CMND:" << reader.ID << endl;
+	cout << "Ngay sinh:" << reader.birthday.day << "/" << reader.birthday.month
+		<< "/" << reader.birthday.year << endl;
+	cout << "Gioi tinh:" << reader.gender << endl;
+	cout << "Email:" << reader.email << endl;
+	cout << "Dia chi:" << reader.address << endl;
+	cout << "Ngay mo the:" << reader.cardCreate.day << "/" << reader.cardCreate.month
+		<< "/" << reader.cardCreate.year << endl;
+	cout << "Ngay het han:" << reader.cardExpire.day << "/" << reader.cardExpire.month
+		<< "/" << reader.cardExpire.year << endl;
+	cout << "-------------------------------------------" << endl;
+}
 
 //Function 2
 
@@ -525,19 +520,7 @@ void listReader(Reader& reader, const char* filename)
 	{
 		cout << "Reader no." << i + 1 << endl;
 		fread(&reader, sizeof(Reader), 1, f1);
-		cout << "Ma doc gia:" << reader.readerID << endl;
-		cout << "Ho va ten:" << reader.name << endl;
-		cout << "CMND:" << reader.ID << endl;
-		cout << "Ngay sinh:" << reader.birthday.day << "/" << reader.birthday.month
-			<< "/" << reader.birthday.year << endl;
-		cout << "Gioi tinh:" << reader.gender << endl;
-		cout << "Email:" << reader.email << endl;
-		cout << "Dia chi:" << reader.address << endl;
-		cout << "Ngay mo the:" << reader.cardCreate.day << "/" << reader.cardCreate.month
-			<< "/" << reader.cardCreate.year << endl;
-		cout << "Ngay het han:" << reader.cardExpire.day << "/" << reader.cardExpire.month
-			<< "/" << reader.cardExpire.year << endl;
-		cout << "-------------------------------------------" << endl;
+		generalReaderInfo(reader);
 	}
 	fclose(f1);
 }
@@ -621,4 +604,146 @@ void deleteReader(Reader& reader, const char* filename1, const char* filename2, 
 	CopyFile(filename2, filename1);
 	fclose(f1);
 	fclose(f2);
+}
+//Hàm delete hoạt động bằng cách sử dụng hàm moveRBottom và tiến hành viết
+// n-1 phần tử từ reader.bin vào temp.bin rồi copy từ temp qua lại reader để xóa độc giả 
+
+//Function 2.5 find id
+
+void findReaderID(Reader& reader, const char* filename, char curID[])
+{
+	int count = 0;
+	FILE* f1 = fopen(filename, "rb");
+	if (f1 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Reader);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&reader, sizeof(Reader), 1, f1);
+		if (strcmp(curID, reader.ID) == 0)
+		{
+			cout << "Thong tin cua doc gia can tim:" << endl;
+			generalReaderInfo(reader);
+			count++;
+		}
+	}
+	if (count == 0)
+	{
+		cout << "Khong co doc gia voi ID can tim" << endl;
+	}
+	fclose(f1);
+}
+
+//Function 2.6 find name
+
+void findReaderName(Reader& reader, const char* filename, char curName[])
+{
+	int count = 0;
+	FILE* f1 = fopen(filename, "rb");
+	if (f1 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Reader);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&reader, sizeof(Reader), 1, f1);
+		if (strcmp(curName, reader.name) == 0)
+		{
+			cout << "Thong tin doc gia voi ten can tim:" << endl;
+			generalReaderInfo(reader);
+			count++;
+		}
+	}
+	if (count == 0)
+	{
+		cout << "Khong co doc gia voi ten can tim" << endl;
+	}
+	fclose(f1);
+}
+
+//Utility function for function 3
+
+void newBook(Book& book)
+{
+	cout << "Nhap vao ma ISBN cua sach:";
+	cin.get(book.ISBN, 20);
+	cin.ignore();
+}
+
+bool checkBook(Book& book, const char* filename)
+{
+	Book temp;
+	FILE* f1 = fopen(filename, "rb");
+	if (f1 == NULL)
+	{
+		return 0;
+	}
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Book);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&temp, sizeof(Book), 1, f1);
+		if (strcmp(temp.ISBN, book.ISBN) == 0)
+		{
+			fclose(f1);
+			return false;
+		}
+	}
+	fclose(f1);
+	return true;
+}
+
+void bookInfo(Book& book)
+{
+	cout << "Nhap vao ten sach:";
+	cin.get(book.bName, 50);
+	cin.ignore();
+	cout << "Nhap vao ten tac gia:";
+	cin.get(book.author, 50);
+	cin.ignore();
+	cout << "Nhap vao nha xuat ban:";
+	cin.get(book.publisher, 50);
+	cin.ignore();
+	cout << "Nhap vao nam xuat ban:";
+	cin >> book.publishY;
+	cin.ignore();
+	cout << "Nhap vao the loai:";
+	cin.get(book.genre, 20);
+	cout << "Nhap gia sach:";
+	cin >> book.price;
+	cin.ignore();
+	cout << "Nhap vao so luong quyen sach:";
+	cin >> book.quantity;
+}
+
+//Function 3
+
+//Function 3.1
+
+//Function 3.2 add book
+
+void addBook(Book& book, const char* filename)
+{
+	FILE* f1 = fopen(filename, "rb+");
+	if (f1 == NULL)
+	{
+		FILE* f1 = fopen(filename, "wb");
+		fclose(f1);
+		addBook(book, filename);
+		return;
+	}
+	fseek(f1, 0, SEEK_END);
+	newBook(book);
+	if (checkBook(book, filename) == false)
+	{
+		cout << "Sach can them vao da ton tai" << endl;
+		return;
+	}
+	bookInfo(book);
+	fwrite(&book, sizeof(book), 1, f1);
+	fclose(f1);
 }
