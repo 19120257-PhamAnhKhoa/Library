@@ -722,7 +722,36 @@ void bookInfo(Book& book)
 
 //Function 3
 
-//Function 3.1
+//Function 3.1 list book
+void showBookInfo(Book book)
+{
+	cout << "ISBN: " << book.ISBN << endl;
+	cout << "Ten: " << book.bName << endl;
+	cout << "Tac gia: " << book.author << endl;
+	cout << "Nha xuat ban: " << book.publisher << endl;
+	cout << "Nam xuat ban: " << book.publishY << endl;
+	cout << "The loai: " << book.genre << endl;
+	cout << "Gia sach: " << book.price << endl;
+	cout << "So luong: " << book.quantity << endl;
+}
+
+void showBookList(const char* filename)
+{
+	Book book;
+	FILE* f = fopen(filename, "rb");
+	if (f == NULL)
+	{
+		cout << "Khong mo duoc file" << endl;
+		return;
+	}
+	while (!feof(f))
+	{
+		int a = fread(&book, sizeof(Book), 1, f);
+		cout << "Quyen sach thu " << a << endl;
+		showBookInfo(book);
+		cout << endl;
+	}
+}
 
 //Function 3.2 add book
 
@@ -747,3 +776,30 @@ void addBook(Book& book, const char* filename)
 	fwrite(&book, sizeof(book), 1, f1);
 	fclose(f1);
 }
+
+//Function 3.3 change book information
+
+int findBook(const char* filename, const char* ISBN, const char* bName)
+{
+	int seek;
+	Book book;
+	FILE* f = fopen(filename, "rb");
+
+
+	if (f == NULL)
+	{
+		cout << "Khong mo duoc file" << endl;
+		return;
+	}
+
+	while (!feof(f))
+	{
+		seek = fread(&book, sizeof(Book), 1, f);
+		if (strcmp(book.ISBN, ISBN) == 0 || strcmp(book.bName, bName) == 0)
+		{
+			return seek - 1;
+		}
+	}
+	return -1;
+
+}//Ham nay se tra ve vi tri quyen sach trong thu vien, tra ve -1 neu khong co sach

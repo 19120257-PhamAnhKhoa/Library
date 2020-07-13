@@ -126,6 +126,12 @@ bool checkBook(Book& book, const char* filename);
 
 void bookInfo(Book& book);
 
+void showBookInfo(Book book);
+
+void showBookList(const char* filename);
+
 void addBook(Book& book, const char* filename);
+
+int findBook(const char* filename, const char* ISBN, const char* bName);
 
 void pass(char mk[]);
