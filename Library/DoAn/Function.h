@@ -132,6 +132,8 @@ void showBookList(const char* filename);
 
 void addBook(Book& book, const char* filename);
 
-int findBook(const char* filename, const char* ISBN, const char* bName);
+int findBook(const char* filename, const char* ISBN, const char* bName, int order);
+
+void changeBookInfo(const char* filename, const char* ISBN, const char* bName, int order);
 
 void pass(char mk[]);

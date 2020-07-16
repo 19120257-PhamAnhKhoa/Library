@@ -668,7 +668,7 @@ void findReaderName(Reader& reader, const char* filename, char curName[])
 
 void newBook(Book& book)
 {
-	cout << "Nhap vao ma ISBN cua sach:";
+	cout << "Nhap vao ma ISBN cua sach: ";
 	cin.get(book.ISBN, 20);
 	cin.ignore();
 }
@@ -699,24 +699,24 @@ bool checkBook(Book& book, const char* filename)
 
 void bookInfo(Book& book)
 {
-	cout << "Nhap vao ten sach:";
+	cout << "Nhap vao ten sach: ";
 	cin.get(book.bName, 50);
 	cin.ignore();
-	cout << "Nhap vao ten tac gia:";
+	cout << "Nhap vao ten tac gia: ";
 	cin.get(book.author, 50);
 	cin.ignore();
-	cout << "Nhap vao nha xuat ban:";
+	cout << "Nhap vao nha xuat ban: ";
 	cin.get(book.publisher, 50);
 	cin.ignore();
-	cout << "Nhap vao nam xuat ban:";
+	cout << "Nhap vao nam xuat ban: ";
 	cin >> book.publishY;
 	cin.ignore();
-	cout << "Nhap vao the loai:";
+	cout << "Nhap vao the loai: ";
 	cin.get(book.genre, 20);
-	cout << "Nhap gia sach:";
+	cout << "Nhap gia sach: ";
 	cin >> book.price;
 	cin.ignore();
-	cout << "Nhap vao so luong quyen sach:";
+	cout << "Nhap vao so luong quyen sach: ";
 	cin >> book.quantity;
 }
 
@@ -738,19 +738,28 @@ void showBookInfo(Book book)
 void showBookList(const char* filename)
 {
 	Book book;
+	int a = 1;
 	FILE* f = fopen(filename, "rb");
 	if (f == NULL)
 	{
 		cout << "Khong mo duoc file" << endl;
 		return;
 	}
-	while (!feof(f))
+	
+	fseek(f, 0, SEEK_END);
+	int n = ftell(f);
+	rewind(f);
+	for (int i = 0;i < n / sizeof(Book);i++)
 	{
-		int a = fread(&book, sizeof(Book), 1, f);
-		cout << "Quyen sach thu " << a << endl;
+		fread(&book, sizeof(Book), 1, f);
+		cout << "Quyen sach thu " << a << ": " << endl;
 		showBookInfo(book);
 		cout << endl;
+
+		a++;
 	}
+
+	fclose(f);
 }
 
 //Function 3.2 add book
@@ -779,9 +788,9 @@ void addBook(Book& book, const char* filename)
 
 //Function 3.3 change book information
 
-int findBook(const char* filename, const char* ISBN, const char* bName)
+int findBook(const char* filename, const char* ISBN, const char* bName, int order)
 {
-	int seek;
+	int seek = -1;
 	Book book;
 	FILE* f = fopen(filename, "rb");
 
@@ -789,17 +798,85 @@ int findBook(const char* filename, const char* ISBN, const char* bName)
 	if (f == NULL)
 	{
 		cout << "Khong mo duoc file" << endl;
-		return;
+		return NULL;//Khong mo duoc file
 	}
 
 	while (!feof(f))
 	{
-		seek = fread(&book, sizeof(Book), 1, f);
-		if (strcmp(book.ISBN, ISBN) == 0 || strcmp(book.bName, bName) == 0)
+		fread(&book, sizeof(Book), 1, f);
+		seek++;
+		if (seek == order - 1 || strcmp(book.ISBN, ISBN) == 0 || strcmp(book.bName, bName) == 0)
 		{
-			return seek - 1;
+			rewind(f);
+			fclose(f);
+			return seek;
 		}
 	}
+	rewind(f);
+	fclose(f);
 	return -1;
 
 }//Ham nay se tra ve vi tri quyen sach trong thu vien, tra ve -1 neu khong co sach
+
+void findAndShowBookInfo(const char* filename, const char* ISBN, const char* bName, int order)
+{
+	int pos = findBook(filename, ISBN, bName, order);
+	return;
+
+}
+
+void changeBookInfo(const char* filename, const char* ISBN, const char* bName, int order)
+{
+	int pos = findBook(filename, ISBN, bName, order);
+	if (pos == NULL)
+	{
+		cout << "Khong mo duoc file" << endl;
+		return;
+	}
+	if (pos == -1)
+	{
+		cout << "Khong co sach can tim" << endl;
+		return;
+	}
+
+	FILE* f = fopen(filename, "rb+");
+	if (f == NULL)
+	{
+		cout << "Khong mo duoc file" << endl;
+		return;
+	}
+
+	Book book;
+	fseek(f, pos * sizeof(Book), SEEK_SET);
+	newBook(book);
+	bookInfo(book);
+
+	if (checkBook(book, filename) == false)
+	{
+		cout << "Sach da ton tai" << endl;
+		fclose(f);
+		return;//Sach da ton tai
+	}
+
+	fwrite(&book, sizeof(Book), 1, f);
+
+	fclose(f);
+
+
+}
+
+//Function 3.4 delete book
+
+void deleteBook(const char* filename, const char* ISBN, const char* bName, int order)
+{
+	int pos = findBook(filename, ISBN, bName, order);
+	if (pos == NULL || pos == -1)
+		return;
+
+	FILE* f = fopen(filename, "rb+");
+	if (f == NULL)
+		return;
+
+	pos++;
+	return;
+}

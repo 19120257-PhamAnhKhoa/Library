@@ -19,9 +19,9 @@ void main(int argc, char* argv[])
 		cout << "Try harder";
 	else
 	{
-		showInfo(user, "user.bin", curUser, curPass);
+		/*showInfo(user, "user.bin", curUser, curPass);*/
 		//changePassword(user, "user.bin");
-		updateInfo(user, "user.bin", curUser, curPass);
+		/*updateInfo(user, "user.bin", curUser, curPass);*/
 		//addReader(reader, "reader.bin")ấ;
 		//listReader(reader, "reader.bin");
 		//cout << "Nhap vao CMND can tim :";
@@ -48,6 +48,19 @@ void main(int argc, char* argv[])
 		////addUser(user, "user.bin");
 		//showInfo(user, "user.bin", curUser, curPass);
 		//updateInfo(user, "user.bin", curUser, curPass);
+
+		showBookList("book.bin");
+		cout << "Nhap vao ISBN, ten va so thu tu cua sach: " << endl;
+		cin.get(book.ISBN, 20);
+		cin.ignore();
+		cin.get(book.bName, 50);
+		cin.ignore();
+		cin >> index;
+		cin.ignore();
+		changeBookInfo("book.bin", book.ISBN, book.bName, index);
+
+
+
 
 	}
 }
