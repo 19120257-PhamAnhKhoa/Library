@@ -57,7 +57,7 @@ void main(int argc, char* argv[])
 		cin.ignore();
 		cin >> index;
 		cin.ignore();
-		changeBookInfo("book.bin", book.ISBN, book.bName, index);
+		findAndShowBookInfo("book.bin", book.ISBN, book.bName, index);
 
 
 

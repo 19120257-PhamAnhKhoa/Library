@@ -466,7 +466,6 @@ void moveRBottom(Reader& reader, const char* filename, int index)
 		if (i == index)
 		{
 			temp = reader;
-			cout << temp.name << endl;
 			k = ftell(f1);
 			for (int j = i; j < n - 1; j++)
 			{
@@ -807,12 +806,10 @@ int findBook(const char* filename, const char* ISBN, const char* bName, int orde
 		seek++;
 		if (seek == order - 1 || strcmp(book.ISBN, ISBN) == 0 || strcmp(book.bName, bName) == 0)
 		{
-			rewind(f);
 			fclose(f);
 			return seek;
 		}
 	}
-	rewind(f);
 	fclose(f);
 	return -1;
 
@@ -820,7 +817,23 @@ int findBook(const char* filename, const char* ISBN, const char* bName, int orde
 
 void findAndShowBookInfo(const char* filename, const char* ISBN, const char* bName, int order)
 {
+	Book book;
+
 	int pos = findBook(filename, ISBN, bName, order);
+	if (pos == NULL || pos == -1)
+		return;
+	
+	FILE* f = fopen(filename, "rb");
+	if (f == NULL)
+		return;
+
+	fseek(f, pos * sizeof(Book), SEEK_SET);
+	fread(&book, sizeof(Book), 1, f);
+
+	cout << "Quyen sach thu " << pos + 1 << endl;
+	showBookInfo(book);
+
+	fclose(f);
 	return;
 
 }
@@ -867,16 +880,64 @@ void changeBookInfo(const char* filename, const char* ISBN, const char* bName, i
 
 //Function 3.4 delete book
 
-void deleteBook(const char* filename, const char* ISBN, const char* bName, int order)
+void moveBBottom(Book& book, const char* filename, int index)
 {
-	int pos = findBook(filename, ISBN, bName, order);
-	if (pos == NULL || pos == -1)
+	int k = 0;
+	index--;
+	Book temp;
+	FILE* f1 = fopen(filename, "rb+");
+	if (f1 == NULL)
 		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Book);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&book, sizeof(Book), 1, f1);
+		if (i == index)
+		{
+			temp = book;
+			k = ftell(f1);
+			for (int j = i; j < n - 1; j++)
+			{
+				fread(&book, sizeof(Book), 1, f1);
+				rewind(f1);
+				fseek(f1, k - sizeof(Book), SEEK_SET);
+				fwrite(&book, sizeof(Book), 1, f1);
+				k = ftell(f1) + sizeof(Book);
+				rewind(f1);
+				fseek(f1, k, SEEK_SET);
+			}
+			fseek(f1, k - sizeof(Book), SEEK_SET);
+			fwrite(&temp, sizeof(Book), 1, f1);
+			break;
+		}
+	}
+	fclose(f1);
+}
 
-	FILE* f = fopen(filename, "rb+");
-	if (f == NULL)
+void deleteBook(Book& book, const char* filename1, const char* filename2, int index)
+{
+	//filename1 = "temp.bin", filename2="book.bin"
+	moveBBottom(book, filename1, index);
+	int k = 0;
+	FILE* f1 = fopen(filename1, "rb+");
+	if (f1 == NULL)
 		return;
-
-	pos++;
-	return;
+	FILE* f2 = fopen(filename2, "wb");
+	if (f2 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Book);
+	rewind(f1);
+	for (int i = 0; i < n - 1; i++)
+	{
+		fread(&book, sizeof(Book), 1, f1);
+		fwrite(&book, sizeof(Book), 1, f2);
+	}
+	fclose(f1);
+	fclose(f2);
+	CopyFile(filename2, filename1);
+	fclose(f1);
+	fclose(f2);
 }

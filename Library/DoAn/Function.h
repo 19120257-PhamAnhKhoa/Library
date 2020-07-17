@@ -134,6 +134,13 @@ void addBook(Book& book, const char* filename);
 
 int findBook(const char* filename, const char* ISBN, const char* bName, int order);
 
+void findAndShowBookInfo(const char* filename, const char* ISBN, const char* bName, int order);
+
 void changeBookInfo(const char* filename, const char* ISBN, const char* bName, int order);
+
+void moveBBottom(Book& book, const char* filename, int index);
+
+void deleteBook(Book& book, const char* filename1, const char* filename2, int index);
+
 
 void pass(char mk[]);
