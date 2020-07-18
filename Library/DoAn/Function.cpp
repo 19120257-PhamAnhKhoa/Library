@@ -797,7 +797,7 @@ int findBook(const char* filename, const char* ISBN, const char* bName, int orde
 	if (f == NULL)
 	{
 		cout << "Khong mo duoc file" << endl;
-		return NULL;//Khong mo duoc file
+		return -1;//Khong mo duoc file
 	}
 
 	while (!feof(f))
@@ -814,29 +814,59 @@ int findBook(const char* filename, const char* ISBN, const char* bName, int orde
 	return -1;
 
 }//Ham nay se tra ve vi tri quyen sach trong thu vien, tra ve -1 neu khong co sach
+//Thu tu uu tien: ISBN > bName > order
 
 void findAndShowBookInfo(const char* filename, const char* ISBN, const char* bName, int order)
 {
 	Book book;
-
-	int pos = findBook(filename, ISBN, bName, order);
-	if (pos == NULL || pos == -1)
+	int pos1 = findBook(filename, ISBN, "", 0);
+	int pos2 = findBook(filename, "", bName, 0);
+	int pos3 = findBook(filename, "", "", order);
+	//Kiem tra truong hop trung
+	if (pos1 == pos2 == pos3 == -1)
+	{
+		cout << "Khong co sach can tim" << endl;
 		return;
-	
+	}
+
 	FILE* f = fopen(filename, "rb");
 	if (f == NULL)
 		return;
+	
+	
 
-	fseek(f, pos * sizeof(Book), SEEK_SET);
-	fread(&book, sizeof(Book), 1, f);
+	int a[] = { pos1,pos2,pos3 };
+	for (int i = 0;i < 2;i++)
+	{
+		for (int j = i + 1;j < 3;j++)
+		{
+			if (a[j] == a[i])
+			{
+				a[j] = -1;
+			}
+		}
+	}
+	for (int i = 0;i < 3;i++)
+	{
+		if (a[i] != -1)
+		{
+			fseek(f, a[i] * sizeof(Book), SEEK_SET);
+			fread(&book, sizeof(Book), 1, f);
 
-	cout << "Quyen sach thu " << pos + 1 << endl;
-	showBookInfo(book);
+			cout << "Quyen sach thu " << a[i] + 1 << endl;
+			showBookInfo(book);
+			cout << endl;
+
+			rewind(f);
+		}
+	}
+	
+	
+
+	
 
 	fclose(f);
-	return;
-
-}
+}//Vét cạn tất cả kết quả có thể có
 
 void changeBookInfo(const char* filename, const char* ISBN, const char* bName, int order)
 {

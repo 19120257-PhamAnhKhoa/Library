@@ -49,7 +49,13 @@ void main(int argc, char* argv[])
 		//showInfo(user, "user.bin", curUser, curPass);
 		//updateInfo(user, "user.bin", curUser, curPass);
 
-		
+		showBookList("book.bin");
+		index = 3;
+		strcpy(book.bName, "CNTT");
+		strcpy(book.ISBN, "123");
+		findAndShowBookInfo("book.bin", book.ISBN, book.bName, index);
+
+
 
 
 	}
