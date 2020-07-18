@@ -916,11 +916,14 @@ void moveBBottom(Book& book, const char* filename, int index)
 	fclose(f1);
 }
 
-void deleteBook(Book& book, const char* filename1, const char* filename2, int index)
+void deleteBook(Book& book,const char* filename1, int index)
 {
-	//filename1 = "temp.bin", filename2="book.bin"
+	//filename1 = "temp.bin", filename2 = "book.bin"
+	const char* filename2 = "temp.bin";
 	moveBBottom(book, filename1, index);
+
 	int k = 0;
+
 	FILE* f1 = fopen(filename1, "rb+");
 	if (f1 == NULL)
 		return;

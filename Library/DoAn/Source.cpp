@@ -49,17 +49,7 @@ void main(int argc, char* argv[])
 		//showInfo(user, "user.bin", curUser, curPass);
 		//updateInfo(user, "user.bin", curUser, curPass);
 
-		showBookList("book.bin");
-		cout << "Nhap vao ISBN, ten va so thu tu cua sach: " << endl;
-		cin.get(book.ISBN, 20);
-		cin.ignore();
-		cin.get(book.bName, 50);
-		cin.ignore();
-		cin >> index;
-		cin.ignore();
-		findAndShowBookInfo("book.bin", book.ISBN, book.bName, index);
-
-
+		
 
 
 	}

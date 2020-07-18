@@ -140,7 +140,6 @@ void changeBookInfo(const char* filename, const char* ISBN, const char* bName, i
 
 void moveBBottom(Book& book, const char* filename, int index);
 
-void deleteBook(Book& book, const char* filename1, const char* filename2, int index);
-
+void deleteBook(Book& book, const char* filename2, int index);
 
 void pass(char mk[]);
