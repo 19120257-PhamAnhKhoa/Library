@@ -2,6 +2,21 @@
 
 //Utility functions for projects and Function 1
 
+int maxDay(int y, int m)
+{
+	if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12)
+		return 31;
+	else if (m == 4 || m == 6 || m == 9 || m == 11)
+		return 30;
+	else if (m == 2)
+	{
+		if (isLeapY(y) == true)
+			return 29;
+		else
+			return 28;
+	}
+}
+
 bool execLib(char* argv[])
 {
 	if (_stricmp(argv[1], "open") == 0)
@@ -24,55 +39,20 @@ bool isLeapY(int n)
 
 void inputDate(Date& date)
 {
-	int maxday = 0;
 	cout << "Nhap vao nam:";
 	cin >> date.year;
 	do
 	{
 		cout << "Nhap vao thang:";
 		cin >> date.month;
-		if (date.month == 1 || date.month == 3 || date.month == 5 || date.month == 7 ||
-			date.month == 8 || date.month == 10 || date.month == 12)
-		{
-			maxday = 31;
-			do
-			{
-				cout << "Nhap vao ngay:";
-				cin >> date.day;
-			} while (date.day > maxday || date.day < 0);
-
-		}
-		else if (date.month == 4 || date.month == 6 || date.month == 9 || date.month == 11)
-		{
-			maxday = 30;
-			do
-			{
-				cout << "Nhap vao ngay:";
-				cin >> date.day;
-			} while (date.day > maxday || date.day < 0);
-		}
-		else if (date.month == 2)
-		{
-			if (isLeapY(date.year) == true)
-			{
-				maxday = 29;
-				do
-				{
-					cout << "Nhap vao ngay:";
-					cin >> date.day;
-				} while (date.day > maxday || date.day < 0);
-			}
-			else
-			{
-				maxday = 28;
-				do
-				{
-					cout << "Nhap vao ngay:";
-					cin >> date.day;
-				} while (date.day > maxday || date.day < 0);
-			}
-		}
 	} while (date.month > 12 || date.month < 1);
+	int maxday = maxDay(date.year, date.month);
+	do
+	{
+		cout << "Nhap vao ngay:";
+		cin >> date.day;
+	} while (date.day<0 || date.day>maxday);
+
 }
 
 void newLogin(User& user)
@@ -732,6 +712,7 @@ void showBookInfo(Book book)
 	cout << "The loai: " << book.genre << endl;
 	cout << "Gia sach: " << book.price << endl;
 	cout << "So luong: " << book.quantity << endl;
+	cout << "-------------------------------------------" << endl;
 }
 
 void showBookList(const char* filename)
@@ -744,17 +725,15 @@ void showBookList(const char* filename)
 		cout << "Khong mo duoc file" << endl;
 		return;
 	}
-	
+
 	fseek(f, 0, SEEK_END);
 	int n = ftell(f);
 	rewind(f);
-	for (int i = 0;i < n / sizeof(Book);i++)
+	for (int i = 0; i < n / sizeof(Book); i++)
 	{
 		fread(&book, sizeof(Book), 1, f);
 		cout << "Quyen sach thu " << a << ": " << endl;
 		showBookInfo(book);
-		cout << endl;
-
 		a++;
 	}
 
@@ -832,13 +811,13 @@ void findAndShowBookInfo(const char* filename, const char* ISBN, const char* bNa
 	FILE* f = fopen(filename, "rb");
 	if (f == NULL)
 		return;
-	
-	
+
+
 
 	int a[] = { pos1,pos2,pos3 };
-	for (int i = 0;i < 2;i++)
+	for (int i = 0; i < 2; i++)
 	{
-		for (int j = i + 1;j < 3;j++)
+		for (int j = i + 1; j < 3; j++)
 		{
 			if (a[j] == a[i])
 			{
@@ -846,7 +825,7 @@ void findAndShowBookInfo(const char* filename, const char* ISBN, const char* bNa
 			}
 		}
 	}
-	for (int i = 0;i < 3;i++)
+	for (int i = 0; i < 3; i++)
 	{
 		if (a[i] != -1)
 		{
@@ -860,10 +839,10 @@ void findAndShowBookInfo(const char* filename, const char* ISBN, const char* bNa
 			rewind(f);
 		}
 	}
-	
-	
 
-	
+
+
+
 
 	fclose(f);
 }//Vét cạn tất cả kết quả có thể có
@@ -946,7 +925,7 @@ void moveBBottom(Book& book, const char* filename, int index)
 	fclose(f1);
 }
 
-void deleteBook(Book& book,const char* filename1, int index)
+void deleteBook(Book& book, const char* filename1, int index)
 {
 	//filename1 = "temp.bin", filename2 = "book.bin"
 	const char* filename2 = "temp.bin";
@@ -973,4 +952,475 @@ void deleteBook(Book& book,const char* filename1, int index)
 	CopyFile(filename2, filename1);
 	fclose(f1);
 	fclose(f2);
+}
+
+//Utility functions for function 4
+
+Date returnDate(Date date)
+{
+	Date temp = date;
+	int maxday = maxDay(date.year, date.month);
+	if (temp.day + 7 > maxday)
+	{
+		temp.day = date.day + 7 - maxday;
+		temp.month = temp.month + 1;
+		if (temp.month > 12)
+		{
+			temp.month = 1;
+			temp.year++;
+		}
+	}
+	else
+		temp.day = temp.day + 7;
+	return temp;
+}
+
+bool validReader(Card card, const char* filename)
+{
+	Reader temp;
+	FILE* f1 = fopen(filename, "rb");
+	if (f1 == NULL)
+		return false;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Reader);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&temp, sizeof(Reader), 1, f1);
+		if (strcmp(card.borrowID, temp.readerID) == 0)
+		{
+			fclose(f1);
+			return true;
+		}
+	}
+	fclose(f1);
+	return false;
+}
+
+void updateQuantity(Book& book, const char* filename, int k)
+{
+	FILE* f1 = fopen(filename, "rb+");
+	if (f1 == NULL)
+		return;
+	fseek(f1, k - sizeof(Book), SEEK_SET);
+	fwrite(&book, sizeof(Book), 1, f1);
+	fclose(f1);
+}
+
+bool validBooks(Card card, int index, const char* filename)
+{
+	Book temp;
+	FILE* f1 = fopen(filename, "rb");
+	if (f1 == NULL)
+		return false;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Book);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&temp, sizeof(Book), 1, f1);
+		if (strcmp(temp.ISBN, card.ISBN[index]) == 0)
+		{
+			int k = ftell(f1);
+			temp.quantity--;
+			temp.borrowed++;
+			updateQuantity(temp, filename, k);
+			return true;
+		}
+	}
+	cout << "Ma ISBN khong ton tai:" << endl;
+	return false;
+}
+
+int soSanhDate(Date date1, Date date2)
+{
+	int maxday = maxDay(date1.year, date1.month);
+	int stack = 0;
+	if (date1.year == date2.year)
+	{
+		if (date1.month == date2.month)
+		{
+			if (date1.day == date2.day)
+				return 0;
+			else
+				return date2.day - date1.day;
+		}
+		else
+		{
+			for (int i = date1.month + 1; i < date2.month; i++)
+			{
+				stack = stack + maxDay(date1.year, i);
+			}
+			return maxday - date1.day + stack + date2.day;
+		}
+	}
+	else
+	{
+		for (int i = date1.month; i < 13; i++)
+		{
+			stack = stack + maxDay(date1.year, i);
+		}
+		for (int i = 1; i < date2.month; i++)
+		{
+			stack = stack + maxDay(date2.year, i);
+		}
+		return maxday - date1.day + stack + date2.day;
+
+	}
+	
+}
+
+
+//Function 4 Borrow card
+
+bool checkBorrowMore(Card card, char ID[], const char* filename3)
+{
+	FILE* f1 = fopen(filename3, "rb+");
+	if (f1 == NULL)
+		return false;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Card);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&card, sizeof(Card), 1, f1);
+		if (strcmp(card.borrowID, ID) == 0)
+		{
+			fclose(f1);
+			return true;
+		}	
+	}
+	fclose(f1);
+	return false;
+}
+
+void borrowMore(Card& card, char ID[], const char* filename1
+	, const char* filename2, const char* filename3)
+{
+	FILE* f1 = fopen(filename3, "rb+");
+	if (f1 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Card);
+	int k = 0;
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&card, sizeof(Card), 1, f1);
+		if (strcmp(card.borrowID, ID) == 0)
+		{
+			if (card.number == 5)
+			{
+				cout << "Khong the muon them sach:" << endl;
+				return;
+			}
+			else
+			{
+				int more = 5 - card.number;
+				int add = 0;
+				cout << "So sach duoc muon them :" << more << endl;
+				do
+				{
+					cout << "Nhap vao so sach muon muon them:" << endl;
+					cin >> add;
+				} while (add > more);
+				cin.ignore();
+				for (int i = card.number; i < card.number + add; i++)
+				{
+					do
+					{
+						cout << "Nhap vao ma ISBN cua sach can muon:";
+						cin >> card.ISBN[i];
+						cin.ignore();
+					} while (validBooks(card, i, filename2) == false);
+				}
+				card.number = card.number + add;
+
+			}
+			k = ftell(f1);
+			break;
+		}
+	}
+	fseek(f1, k - sizeof(Card), SEEK_SET);
+	fwrite(&card, sizeof(Card), 1, f1);
+	fclose(f1);
+}
+
+void showcard(Card& card)
+{
+
+	cout << "Ten doc gia:" << card.borrowID << endl;
+	cout << "So sach muon:" << card.number << endl;
+	for (int i = 0; i < card.number; i++)
+	{
+		cout << "Ma ISBN sach thu "<<i+1<<":"<< card.ISBN[i] << endl;
+	}
+
+	cout << "-------------------------------------------" << endl;
+}
+
+void showCardList(Card& card, const char* filename)
+{
+	FILE* f1 = fopen(filename, "rb+");
+	if (f1 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Card);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&card, sizeof(Card), 1, f1);
+		showcard(card);
+		cout << endl;
+	}
+	fclose(f1);
+}
+
+void createBorrowCard(Card& card, const char* filename1,
+	const char* filename2, const char* filename3)
+{
+	char ID[10];
+	FILE* f1 = fopen(filename3, "rb+");
+	if (f1 == NULL)
+	{
+		FILE* f1 = fopen(filename3, "wb");
+		createBorrowCard(card, filename1, filename2, filename3);
+		return;
+	}
+	cout << "Nhap vao ma doc gia:";
+	cin.get(card.borrowID, 10);
+	cin.ignore();
+	strcpy(ID, card.borrowID);
+	if (validReader(card, filename1) == true)
+	{
+		if (checkBorrowMore(card, ID, filename3) == true)
+		{
+			borrowMore(card, ID, filename1, filename2, filename3);
+			return;
+		}
+		do
+		{
+			cout << "Nhap vao so luong sach can muon:";
+			cin >> card.number;
+		} while (card.number > 5);
+		cin.ignore();
+		showBookList(filename2);
+		for (int i = 0; i < card.number; i++)
+		{
+			do
+			{
+				cout << "Nhap vao ma ISBN cua sach can muon:";
+				cin >> card.ISBN[i];
+				cin.ignore();
+			} while (validBooks(card, i, filename2) == false);
+		}
+		cout << "Nhap vao ngay muon sach:" << endl;
+		inputDate(card.borrowDate);
+		cin.ignore();
+		cout << "Ngay han tra sach la:" << endl;
+		card.expectReturn = returnDate(card.borrowDate);
+		cout << card.expectReturn.day << "/" << card.expectReturn.month
+			<< "/" << card.expectReturn.year << endl;
+	}
+	else
+	{
+		cout << "Ma doc gia khong ton tai" << endl;
+		return;
+	}
+	fseek(f1, 0, SEEK_END);
+	fwrite(&card, sizeof(Card), 1, f1);
+	fclose(f1);
+}
+
+//Utility functions for function 5
+
+void moveCardBottom(Card& card, const char* filename, char ID[])
+{
+	int k = 0;
+	Card temp;
+	FILE* f1 = fopen(filename, "rb+");
+	if (f1 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Card);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&card, sizeof(Card), 1, f1);
+		if (strcmp(ID, card.borrowID) == 0)
+		{
+			temp = card;
+			k = ftell(f1);
+			for (int j = i; j < n - 1; j++)
+			{
+				fread(&card, sizeof(Card), 1, f1);
+				rewind(f1);
+				fseek(f1, k - sizeof(Card), SEEK_SET);
+				fwrite(&card, sizeof(Card), 1, f1);
+				k = ftell(f1) + sizeof(Card);
+				rewind(f1);
+				fseek(f1, k, SEEK_SET);
+			}
+			fseek(f1, k - sizeof(Card), SEEK_SET);
+			fwrite(&card, sizeof(Card), 1, f1);
+			break;
+		}
+	}
+	fclose(f1);
+}
+
+void deleteCard(Card& card, const char* filename1, char ID[])
+{
+	const char* filename2 = "temp.bin";
+	moveCardBottom(card, filename1, ID);
+
+	int k = 0;
+
+	FILE* f1 = fopen(filename1, "rb+");
+	if (f1 == NULL)
+		return;
+	FILE* f2 = fopen(filename2, "wb");
+	if (f2 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Card);
+	rewind(f1);
+	for (int i = 0; i < n - 1; i++)
+	{
+		fread(&card, sizeof(Card), 1, f1);
+		fwrite(&card, sizeof(Card), 1, f2);
+	}
+	fclose(f1);
+	fclose(f2);
+	CopyFile(filename2, filename1);
+	fclose(f1);
+	fclose(f2);
+}
+
+int money(Book book, const char* filename2, char ISBN[])
+{
+	FILE* f1 = fopen(filename2, "rb");
+	if (f1 == NULL)
+		return 0;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Book);
+	rewind(f1);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&book, sizeof(Book), 1, f1);
+		if (strcmp(book.ISBN, ISBN) == 0)
+		{
+			return book.price;
+		}
+	}
+	return 0;
+}
+
+int isLost(Book& book, int n, const char* filename2)
+{
+	FILE* f1 = fopen(filename2, "rb");
+	if (f1 == NULL)
+		return 0;
+	int kq = 0;
+	char ISBN[10];
+	if (n == 0)
+		return 0;
+	else
+	{
+		cout << "Nhap vao ISBN cua sach bi mat :" << endl;
+		for (int i = 0; i < n; i++)
+		{
+			cout << "Nhap vao ISBN cua sach thu " << i + 1 << ":";
+			cin >> ISBN;
+			kq = kq + money(book, filename2, ISBN) * 2;
+		}
+	}
+	return kq;
+}
+
+int isLate(int n)
+{
+	if (n <= 0)
+		return 0;
+	else
+		return 5000 * n;
+}
+
+void backBooks(Book& book, Card& card, char ID[], const char* filename2,
+	const char* filename3, int k)
+{
+	FILE* f1 = fopen(filename3, "rb");
+	if (f1 == NULL)
+		return;
+	FILE* f2 = fopen(filename2, "rb+");
+	if (f2 == NULL)
+		return;
+	int location;
+	fseek(f1, k - sizeof(Card), SEEK_SET);
+	fread(&card, sizeof(Card), 1, f1);
+	fseek(f2, 0, SEEK_END);
+	int n = ftell(f2) / sizeof(Book);
+	rewind(f2);
+	for (int i = 0; i < n; i++)
+	{
+		fread(&book, sizeof(Book), 1, f2);
+		for (int j = 0; j < card.number; j++)
+		{
+			if (strcmp(card.ISBN[j], book.ISBN) == 0)
+			{
+				location = ftell(f2);
+				book.quantity++;
+				book.borrowed--;
+				updateQuantity(book, filename2, location);
+			}
+		}
+	}
+	fclose(f1);
+	fclose(f2);
+
+}
+
+//Function 5 Return card
+
+void createReturnCard(Card& card, const char* filename1,
+	const char* filename2, const char* filename3)
+{
+	Book book;
+	char ISBN[10];
+	char MSR[10];
+	int k = 0, late = 0, lost = 0, i = 0, sum = 0;
+	FILE* f1 = fopen(filename3, "rb+");
+	if (f1 == NULL)
+		return;
+	fseek(f1, 0, SEEK_END);
+	int n = ftell(f1) / sizeof(Card);
+	rewind(f1);
+	cout << "Nhap vao ma so doc gia:";
+	cin.get(MSR, 10);
+	cin.ignore();
+	for (int i = 0; i < n; i++)
+	{
+		fread(&card, sizeof(Card), 1, f1);
+		if (strcmp(card.borrowID, MSR) == 0)
+		{
+			k = ftell(f1);
+			showcard(card);
+			cout << "Co bao nhieu sach bi mat :";
+			cin >> lost;
+			sum = sum + isLost(book, lost, filename2);
+			cout << "Ngay han tra sach la:" << endl;
+			card.expectReturn = returnDate(card.borrowDate);
+			cout << card.expectReturn.day << "/" << card.expectReturn.month
+				<< "/" << card.expectReturn.year << endl;
+			cout << "Nhap vao ngay tra thuc te:" << endl;
+			inputDate(card.actualReturn);
+			late = soSanhDate(card.expectReturn, card.actualReturn) * (card.number - lost);
+			backBooks(book, card, MSR, filename2, filename3, k);
+			sum = sum + isLate(late);
+			cout << "So tien phai den bu cho thu vien la:" << sum;
+
+		}
+	}
+	deleteCard(card, filename3, MSR);
+	fclose(f1);
 }

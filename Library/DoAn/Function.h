@@ -56,23 +56,27 @@ struct Book
 	char genre[20];
 	int price;
 	int quantity;
+	int borrowed;
 };
 
 struct Card
 {
-	char readerID[10];
-	Date borrowTime;
+	char borrowID[10];
+	char ISBN[5][10];
+	Date borrowDate;
 	Date expectReturn;
 	Date actualReturn;
 	int number;
-	bool late;
-	bool lost;
+	bool late = 0;
+	bool lost = 0;
 };
 
 //Các định nghĩa hàm
 
 bool login(User& user, const char* filename, bool& isAdmin,
 	bool& isManager, bool& isExecutive, char curUser[], char curPass[]);
+
+int maxDay(int y, int m);
 
 bool execLib(char* argv[]);
 
@@ -141,5 +145,39 @@ void changeBookInfo(const char* filename, const char* ISBN, const char* bName, i
 void moveBBottom(Book& book, const char* filename, int index);
 
 void deleteBook(Book& book, const char* filename2, int index);
+
+Date returnDate(Date date);
+
+bool validReader(Card card, const char* filename);
+
+void updateQuantity(Book& book, const char* filename, int k);
+
+bool validBooks(Card card, int index, const char* filename);
+
+int soSanhDate(Date date1, Date date2);
+
+bool checkBorrowMore(Card card, char ID[], const char* filename3);
+
+void borrowMore(Card& card, char ID[], const char* filename1, const char* filename2, const char* filename3);
+
+void showcard(Card& card);
+
+void showCardList(Card& card, const char* filename);
+
+void createBorrowCard(Card& card, const char* filename1, const char* filename2, const char* filename3);
+
+void moveCardBottom(Card& card, const char* filename, char ID[]);
+
+void deleteCard(Card& card, const char* filename1, char ID[]);
+
+int money(Book book, const char* filename2, char ISBN[]);
+
+int isLost(Book& book, int n, const char* filename2);
+
+int isLate(int n);
+
+void backBooks(Book &book, Card &card, char ID[], const char* filename2, const char* filename3, int k);
+
+void createReturnCard(Card& card, const char* filename1, const char* filename2, const char* filename3);
 
 void pass(char mk[]);

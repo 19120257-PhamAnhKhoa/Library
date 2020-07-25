@@ -1,7 +1,5 @@
 ﻿#include "Function.h"
 
-
-
 void main(int argc, char* argv[])
 {
 	int index;
@@ -48,15 +46,19 @@ void main(int argc, char* argv[])
 		////addUser(user, "user.bin");
 		//showInfo(user, "user.bin", curUser, curPass);
 		//updateInfo(user, "user.bin", curUser, curPass);
-
-		showBookList("book.bin");
-		index = 3;
-		strcpy(book.bName, "CNTT");
-		strcpy(book.ISBN, "123");
-		findAndShowBookInfo("book.bin", book.ISBN, book.bName, index);
-
-
-
-
+		//showBookList("book.bin");
+		//index = 3;
+		//strcpy(book.bName, "CNTT");
+		//strcpy(book.ISBN, "123");
+		//findAndShowBookInfo("book.bin", book.ISBN, book.bName, index);
+		//addBook(book, "book.bin");
+		//listReader(reader, "reader.bin");
+		//showBookList("book.bin");
+		//showCardList(card, "card.bin");
+		//createBorrowCard(card, "reader.bin", "book.bin", "card.bin");
+		//showBookList("book.bin");
+		//showCardList(card, "card.bin");
+		//createReturnCard(card, "reader.bin", "book.bin", "card.bin");
+		//showBookList("book.bin");
 	}
 }
