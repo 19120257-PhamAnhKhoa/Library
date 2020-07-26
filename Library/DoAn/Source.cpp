@@ -60,5 +60,11 @@ void main(int argc, char* argv[])
 		//showCardList(card, "card.bin");
 		//createReturnCard(card, "reader.bin", "book.bin", "card.bin");
 		//showBookList("book.bin");
+		showBookList("book.bin");
+		statisticOfBook("book.bin");
+		statisticOfGenre("book.bin");
+		statisticOfReader("reader.bin");
+		statisticOfReaderGender("reader.bin");
+		statisticOfBorrowedBook("book.bin");
 	}
 }

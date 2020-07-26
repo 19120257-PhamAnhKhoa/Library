@@ -56,7 +56,7 @@ struct Book
 	char genre[20];
 	int price;
 	int quantity;
-	int borrowed;
+	int borrowed = 0;
 };
 
 struct Card
@@ -179,5 +179,15 @@ int isLate(int n);
 void backBooks(Book &book, Card &card, char ID[], const char* filename2, const char* filename3, int k);
 
 void createReturnCard(Card& card, const char* filename1, const char* filename2, const char* filename3);
+
+void statisticOfBook(const char* filename);
+
+void statisticOfGenre(const char* filename);
+
+void statisticOfReader(const char* filename);
+
+void statisticOfReaderGender(const char* filename);
+
+void statisticOfBorrowedBook(const char* filename);
 
 void pass(char mk[]);

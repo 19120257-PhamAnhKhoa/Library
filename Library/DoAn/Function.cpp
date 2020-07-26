@@ -757,6 +757,7 @@ void addBook(Book& book, const char* filename)
 	if (checkBook(book, filename) == false)
 	{
 		cout << "Sach can them vao da ton tai" << endl;
+		fclose(f1);
 		return;
 	}
 	bookInfo(book);
@@ -779,7 +780,11 @@ int findBook(const char* filename, const char* ISBN, const char* bName, int orde
 		return -1;//Khong mo duoc file
 	}
 
-	while (!feof(f))
+	fseek(f, 0, SEEK_END);
+	int n = ftell(f) / sizeof(Book);
+	rewind(f);
+
+	for (int i = 0;i < n;i++)
 	{
 		fread(&book, sizeof(Book), 1, f);
 		seek++;
@@ -1423,4 +1428,134 @@ void createReturnCard(Card& card, const char* filename1,
 	}
 	deleteCard(card, filename3, MSR);
 	fclose(f1);
+}
+
+//Function statistical
+
+void statisticOfBook(const char* filename)
+{
+	Book book;
+	int res = 0;
+
+	FILE* f = fopen(filename, "rb");
+	if (f == NULL)
+		return;
+
+	fseek(f, 0, SEEK_END);
+	int n = ftell(f) / sizeof(Book);
+	rewind(f);
+
+	for (int i = 0;i < n;i++)
+	{
+		fread(&book, sizeof(Book), 1, f);
+		res += book.quantity;
+	}
+
+	cout << "Tong so sach trong thu vien: " << res << endl;
+	fclose(f);
+}
+
+void statisticOfGenre(const char* filename)
+{
+	Book book;
+	Book temp;
+
+	FILE* f = fopen(filename, "rb");
+	if (f == NULL)
+		return;
+
+	fseek(f, 0, SEEK_END);
+	int n = ftell(f) / sizeof(Book);
+	rewind(f);
+
+	int* a = new int[n];
+	for (int i = 0;i < n;i++)
+	{
+		a[i] = 0;
+	}
+	for (int i = 0;i < n;i++)
+	{
+		fread(&book, sizeof(Book), 1, f);
+		if (a[i] == -1)
+			continue;
+		
+		int count = 1;
+		for (int j = i + 1;j < n;j++)
+		{
+			fread(&temp, sizeof(Book), 1, f);
+			if (strcmp(book.genre, temp.genre) == 0)
+			{
+				a[j] = -1;
+				count++;
+			}
+		}
+		fseek(f, (i + 1)* sizeof(Book), SEEK_SET);
+		cout << "The loai " << book.genre << ": " << count << endl;
+	}
+	
+
+	delete[]a;
+
+	fclose(f);
+}
+
+void statisticOfReader(const char* filename)
+{
+	FILE* f = fopen(filename, "rb");
+	if (f == NULL)
+		return;
+	fseek(f, 0, SEEK_END);
+	int n = ftell(f) / sizeof(Reader);
+	cout << "So luong doc gia: " << n << endl;
+
+	fclose(f);
+}
+
+void statisticOfReaderGender(const char* filename)
+{
+	int male = 0;
+	int female = 0;
+	Reader reader;
+
+	FILE* f = fopen(filename, "rb");
+	if (f == NULL)
+		return;
+	fseek(f, 0, SEEK_END);
+	int n = ftell(f) / sizeof(Reader);
+	rewind(f);
+
+	for (int i = 0;i < n;i++)
+	{
+		fread(&reader, sizeof(Reader), 1, f);
+		if (strcmp(reader.gender, "nam") == 0)
+		{
+			male++;
+		}
+	}
+	female = n - male;
+	cout << "So doc gia nam: " << male << endl;
+	cout << "So doc gia nu: " << female << endl;
+
+	fclose(f);
+}
+
+void statisticOfBorrowedBook(const char* filename)
+{
+	Book book;
+
+	FILE* f = fopen(filename, "rb");
+	if (f == NULL)
+		return;
+
+	fseek(f, 0, SEEK_END);
+	int n = ftell(f) / sizeof(Book);
+	rewind(f);
+	
+	for (int i = 0;i < n;i++)
+	{
+		fread(&book, sizeof(Book), 1, f);
+		cout << "So sach " << book.bName << " dang duoc muon: " << book.borrowed << endl;
+	}
+
+	fclose(f);
 }
