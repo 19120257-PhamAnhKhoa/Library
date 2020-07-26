@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include<conio.h>
+#include<Windows.h>
 #define BUF_SIZE 1024*10
 
 using namespace std;
@@ -191,3 +192,5 @@ void statisticOfReaderGender(const char* filename);
 void statisticOfBorrowedBook(const char* filename);
 
 void pass(char mk[]);
+
+void clearScreen();
